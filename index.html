@@ -37,29 +37,29 @@ body {
 /* ===== ОБЛАСТЬ СКРИНШОТА ===== */
 .capture-area {
     background: var(--bg);
-    padding: 30px 20px 40px;
+    padding: 20px 20px 30px; /* Немного уменьшили верхний отступ */
 }
 
-/* СТИЛИ ДЛЯ ИНСТАГРАМ-СТОРИС (Применяются только при скриншоте) */
+/* СТИЛИ ДЛЯ ИНСТАГРАМ-СТОРИС */
 .story-mode {
-    width: 540px !important;       /* Логическая ширина (при scale:2 даст 1080px) */
-    height: 960px !important;      /* Логическая высота (при scale:2 даст 1920px) */
+    width: 540px !important;
+    height: 960px !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: center !important; /* Центрируем контент по вертикали */
+    justify-content: center !important;
     padding: 40px !important;
     box-sizing: border-box !important;
 }
-/* Немного сжимаем отступы для сторис, чтобы всё влезло красиво */
-.story-mode .header-info { margin-bottom: 20px; }
-.story-mode .day-block { margin-bottom: 25px; }
-.story-mode .phone-block { margin-top: 30px; padding: 20px; }
-
+/* Компактные отступы для сторис */
+.story-mode .header-info { margin-bottom: 15px; }
+.story-mode .day-block { margin-bottom: 20px; }
+/* Принудительно компактный блок телефона в сторис */
+.story-mode .phone-block { margin-top: 25px !important; padding: 15px !important; } 
 
 /* Хедер */
 .header-info {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     background: var(--card-bg);
     padding: 15px;
     border-radius: 16px;
@@ -71,19 +71,16 @@ body {
     color: var(--gold);
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 .legend {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
     font-size: 13px;
     font-weight: 600;
     color: #888;
 }
 
 /* Блок дня */
-.day-block { margin-bottom: 35px; }
+.day-block { margin-bottom: 30px; }
 
 .day-header {
     display: flex;
@@ -103,9 +100,9 @@ body {
 /* Кнопка статуса */
 .status-toggle {
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: 11px; /* Чуть меньше */
     font-weight: 700;
-    padding: 6px 12px;
+    padding: 5px 10px;
     border-radius: 20px;
     cursor: pointer;
     text-transform: uppercase;
@@ -129,15 +126,15 @@ body {
 .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 10px; /* Чуть плотнее сетка */
 }
 
 /* СЛОТЫ */
 .time-slot {
-    padding: 14px 0;
+    padding: 12px 0; /* Чуть меньше высота кнопок */
     text-align: center;
-    border-radius: 12px;
-    font-size: 18px;
+    border-radius: 10px;
+    font-size: 17px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
@@ -163,48 +160,53 @@ body {
     filter: grayscale(100%);
 }
 
-/* ===== ОБНОВЛЕННЫЙ БЛОК ТЕЛЕФОНА ===== */
+/* ===== ОБНОВЛЕННЫЙ КОМПАКТНЫЙ БЛОК ТЕЛЕФОНА ===== */
 .phone-block {
-    margin-top: 50px;
+    margin-top: 25px; /* Был 50px */
     text-align: center;
-    padding: 30px 20px;
-    background: #1c1c1c; /* Темный фон карточки */
-    border-radius: 24px; /* Сильное скругление */
+    padding: 15px 20px; /* Был 30px */
+    background: #1c1c1c;
+    border-radius: 16px; /* Был 24px, сделали строже */
     border: 1px solid #333;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Тень для объема */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4); /* Тень мягче */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .phone-label {
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    color: #999; /* Серый цвет заголовка */
-    margin-bottom: 8px;
+    font-size: 12px; /* Уменьшили */
+    color: #888;
+    margin-bottom: 4px;
     font-weight: 500;
     letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 .phone-num {
     display: block;
     font-family: 'Oswald', sans-serif;
-    font-size: 34px; /* Крупный размер */
+    font-size: 28px; /* Уменьшили с 34px */
     color: white;
     font-weight: 700;
     text-decoration: none;
     letter-spacing: 1px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     line-height: 1.2;
 }
 
 .phone-sub {
     font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    color: white;
-    font-weight: 500;
+    font-size: 13px;
+    color: #bbb;
+    font-weight: 400;
 }
 
 .direct-highlight {
-    color: var(--gold); /* Золотой акцент */
-    font-weight: 700;
+    color: var(--gold);
+    font-weight: 600;
 }
 
 /* КНОПКА СКРИНШОТА */
@@ -258,11 +260,11 @@ body {
             <div class="grid" id="tomorrow"></div>
         </div>
 
-        <!-- КРАСИВЫЙ БЛОК КОНТАКТОВ -->
+        <!-- ОБНОВЛЕННЫЙ БЛОК -->
         <div class="phone-block">
             <div class="phone-label">Запись по телефону</div>
             <a href="tel:+992008270110" class="phone-num">+992 008 27 01 10</a>
-            <div class="phone-sub">Или в <span class="direct-highlight">Direct</span></div>
+            <div class="phone-sub">Или пишите в <span class="direct-highlight">Direct</span></div>
         </div>
 
     </div>
@@ -313,9 +315,6 @@ function toggleDayStatus(gridId, btn) {
     }
 }
 
-/* ===========================
-   БЕЗОПАСНЫЙ STORIES SHARE
-   =========================== */
 async function copyImage() {
     const btn = document.querySelector('.copy-btn');
     const originalText = btn.innerText;
@@ -325,64 +324,44 @@ async function copyImage() {
         const target = document.getElementById("capture");
         await document.fonts.ready;
 
-        // ИЗМЕНЕНИЯ: Фиксируем размер 1080x1920 (через scale 2 и 540x960)
         const canvas = await html2canvas(target, {
             backgroundColor: "#121212",
-            scale: 2, // 540 * 2 = 1080px
+            scale: 2,
             width: 540,
             height: 960,
             windowWidth: 540,
             windowHeight: 960,
             useCORS: true,
-            // onclone позволяет изменить DOM перед скриншотом, не меняя реальную страницу
             onclone: (clonedDoc) => {
                 const el = clonedDoc.getElementById("capture");
                 const wrapper = clonedDoc.querySelector(".wrapper");
-                
-                // Убираем ограничение ширины wrapper, чтобы контент мог расшириться до 540
                 if (wrapper) wrapper.style.maxWidth = "none";
-
-                // Добавляем класс, который центрирует и форматирует под сторис
                 el.classList.add("story-mode");
             }
         });
 
         canvas.toBlob(async (blob) => {
             try {
-                // ⬇️ КЛЮЧЕВОЕ: максимально безопасная проверка
                 if (navigator.share && typeof File !== "undefined") {
-                    const file = new File([blob], "barber-amin-story.png", {
-                        type: "image/png"
-                    });
-
-                    await navigator.share({
-                        files: [file],
-                        title: "Barber Amin",
-                        text: "Свободные места ✂️"
-                    });
-
+                    const file = new File([blob], "barber-amin-story.png", { type: "image/png" });
+                    await navigator.share({ files: [file], title: "Barber Amin", text: "Свободные места ✂️" });
                 } else {
-                    // fallback — как было, НИЧЕГО не ломает
-                    await navigator.clipboard.write([
-                        new ClipboardItem({ "image/png": blob })
-                    ]);
-                    alert("✅ Скриншот для сторис скопирован!");
+                    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+                    alert("✅ Скриншот скопирован!");
                 }
             } catch (e) {
-                alert("📸 Сделайте скриншот вручную");
+                alert("📸 Сохраните скриншот вручную");
             }
-
             btn.innerText = originalText;
         });
 
     } catch (e) {
         console.error(e);
         btn.innerText = originalText;
-        alert("📸 Ошибка создания скриншота");
+        alert("📸 Ошибка создания");
     }
 }
 </script>
-
 
 </body>
 </html>
