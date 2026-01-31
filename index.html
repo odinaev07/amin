@@ -17,8 +17,8 @@
     --gold: #d4af37;
     --busy-bg: #252525;
     --busy-text: #555555;
-    --red: #ff4444;       /* Цвет выходного */
-    --green: #4caf50;     /* Цвет открытой записи */
+    --red: #ff4444;
+    --green: #4caf50;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -84,7 +84,7 @@ body {
     line-height: 1;
 }
 
-/* ===== ПЕРЕКЛЮЧАТЕЛЬ СТАТУСА (КНОПКА) ===== */
+/* Кнопка статуса */
 .status-toggle {
     font-family: 'Inter', sans-serif;
     font-size: 12px;
@@ -97,16 +97,12 @@ body {
     user-select: none;
     border: 1px solid transparent;
 }
-
-/* Состояние: Открыто */
 .status-toggle.open {
     background: rgba(76, 175, 80, 0.1);
     color: var(--green);
     border-color: var(--green);
 }
 .status-toggle.open::before { content: "● "; }
-
-/* Состояние: Выходной */
 .status-toggle.closed {
     background: rgba(255, 68, 68, 0.1);
     color: var(--red);
@@ -131,14 +127,10 @@ body {
     transition: all 0.2s;
     user-select: none;
     position: relative;
-    
-    /* Свободно */
     background: rgba(212, 175, 55, 0.1);
     border: 1px solid var(--gold);
     color: var(--gold);
 }
-
-/* Занято / Выходной */
 .time-slot.booked {
     background: var(--busy-bg);
     border: 1px solid #333;
@@ -152,25 +144,51 @@ body {
     top: 4px;
     right: 6px;
     opacity: 0.5;
-    text-decoration: none;
     filter: grayscale(100%);
 }
 
-/* ТЕЛЕФОН */
+/* ===== ОБНОВЛЕННЫЙ БЛОК ТЕЛЕФОНА ===== */
 .phone-block {
-    margin-top: 40px;
+    margin-top: 50px;
     text-align: center;
-    padding: 20px;
-    background: var(--card-bg);
-    border-radius: 20px;
+    padding: 30px 20px;
+    background: #1c1c1c; /* Темный фон карточки */
+    border-radius: 24px; /* Сильное скругление */
     border: 1px solid #333;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Тень для объема */
 }
+
+.phone-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: #999; /* Серый цвет заголовка */
+    margin-bottom: 8px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
 .phone-num {
     display: block;
     font-family: 'Oswald', sans-serif;
-    font-size: 26px;
+    font-size: 34px; /* Крупный размер */
     color: white;
-    margin-top: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.phone-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: white;
+    font-weight: 500;
+}
+
+.direct-highlight {
+    color: var(--gold); /* Золотой акцент */
+    font-weight: 700;
 }
 
 /* КНОПКА СКРИНШОТА */
@@ -206,7 +224,6 @@ body {
         <div class="day-block">
             <div class="day-header">
                 <span class="day-title">СЕГОДНЯ</span>
-                <!-- Кнопка переключения -->
                 <div class="status-toggle open" onclick="toggleDayStatus('today', this)">
                     Запись открыта
                 </div>
@@ -218,7 +235,6 @@ body {
         <div class="day-block">
             <div class="day-header">
                 <span class="day-title">ЗАВТРА</span>
-                <!-- Кнопка переключения -->
                 <div class="status-toggle open" onclick="toggleDayStatus('tomorrow', this)">
                     Запись открыта
                 </div>
@@ -226,10 +242,11 @@ body {
             <div class="grid" id="tomorrow"></div>
         </div>
 
+        <!-- КРАСИВЫЙ БЛОК КОНТАКТОВ -->
         <div class="phone-block">
-            Запись по телефону
-            <span class="phone-num">+992 008 27 01 10</span>
-			           Или в Direct
+            <div class="phone-label">Запись по телефону</div>
+            <a href="tel:+992008270110" class="phone-num">+992 008 27 01 10</a>
+            <div class="phone-sub">Или в <span class="direct-highlight">Direct</span></div>
         </div>
 
     </div>
@@ -248,7 +265,6 @@ const times = [
     "21:00","22:00"
 ];
 
-// Генерация сетки
 function render(id) {
     const grid = document.getElementById(id);
     times.forEach(time => {
@@ -263,29 +279,20 @@ function render(id) {
 render("today");
 render("tomorrow");
 
-// 🔥 НОВАЯ ФУНКЦИЯ: Переключение "Выходной / Открыто"
 function toggleDayStatus(gridId, btn) {
     const grid = document.getElementById(gridId);
     const slots = grid.querySelectorAll('.time-slot');
-    
-    // Проверяем текущее состояние по классу
     const isOpen = btn.classList.contains('open');
 
     if (isOpen) {
-        // СТАВИМ ВЫХОДНОЙ
         btn.classList.remove('open');
         btn.classList.add('closed');
         btn.innerText = "⛔ ВЫХОДНОЙ";
-        
-        // Все слоты делаем занятыми
         slots.forEach(slot => slot.classList.add('booked'));
     } else {
-        // СТАВИМ ОТКРЫТО
         btn.classList.remove('closed');
         btn.classList.add('open');
         btn.innerText = "Запись открыта";
-        
-        // Очищаем все слоты
         slots.forEach(slot => slot.classList.remove('booked'));
     }
 }
@@ -295,7 +302,6 @@ async function copyImage() {
     const originalText = btn.innerText;
     btn.innerText = "⏳ Секунду...";
     
-    // Скрываем кнопки скриншота на момент снимка, но оставляем контент
     const target = document.getElementById("capture");
     await document.fonts.ready;
 
@@ -308,9 +314,9 @@ async function copyImage() {
     canvas.toBlob(async blob => {
         try {
             await navigator.clipboard.write([ new ClipboardItem({ "image/png": blob }) ]);
-            alert("✅ Скриншот скопирован в буфер обмена!");
+            alert("✅ Скриншот скопирован!");
         } catch (err) {
-            alert("Не удалось скопировать автоматически. Сделайте скриншот вручную.");
+            alert("Ошибка. Сделайте скриншот вручную.");
         }
         btn.innerText = originalText;
     });
