@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barber Stories | Smart Schedule</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<style>
+:root {
+    --bg: #121212;
+    --card-bg: #1c1c1c;
+    --gold: #d4af37;
+    --busy-bg: #252525;
+    --busy-text: #555555;
+    --red: #ff4444;       /* Цвет выходного */
+    --green: #4caf50;     /* Цвет открытой записи */
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    color: white;
+}
+
+.wrapper { width: 100%; max-width: 500px; padding-bottom: 120px; }
+
+/* ===== ОБЛАСТЬ СКРИНШОТА ===== */
+.capture-area {
+    background: var(--bg);
+    padding: 30px 20px 40px;
+}
+
+/* Хедер */
+.header-info {
+    text-align: center;
+    margin-bottom: 30px;
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 16px;
+    border: 1px solid #333;
+}
+.brand {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+}
+
+/* Блок дня */
+.day-block { margin-bottom: 35px; }
+
+.day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-left: 5px;
+    border-left: 4px solid var(--gold);
+}
+
+.day-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 22px;
+    line-height: 1;
+}
+
+/* ===== ПЕРЕКЛЮЧАТЕЛЬ СТАТУСА (КНОПКА) ===== */
+.status-toggle {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    user-select: none;
+    border: 1px solid transparent;
+}
+
+/* Состояние: Открыто */
+.status-toggle.open {
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--green);
+    border-color: var(--green);
+}
+.status-toggle.open::before { content: "● "; }
+
+/* Состояние: Выходной */
+.status-toggle.closed {
+    background: rgba(255, 68, 68, 0.1);
+    color: var(--red);
+    border-color: var(--red);
+}
+
+/* СЕТКА */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+/* СЛОТЫ */
+.time-slot {
+    padding: 14px 0;
+    text-align: center;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    position: relative;
+    
+    /* Свободно */
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+}
+
+/* Занято / Выходной */
+.time-slot.booked {
+    background: var(--busy-bg);
+    border: 1px solid #333;
+    color: var(--busy-text);
+    text-decoration: line-through;
+}
+.time-slot.booked::after {
+    content: "❌";
+    position: absolute;
+    font-size: 10px;
+    top: 4px;
+    right: 6px;
+    opacity: 0.5;
+    text-decoration: none;
+    filter: grayscale(100%);
+}
+
+/* ТЕЛЕФОН */
+.phone-block {
+    margin-top: 40px;
+    text-align: center;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid #333;
+}
+.phone-num {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 26px;
+    color: white;
+    margin-top: 8px;
+}
+
+/* КНОПКА СКРИНШОТА */
+.bottom-panel {
+    position: fixed; bottom: 20px; left: 0; right: 0;
+    display: flex; justify-content: center; z-index: 99;
+}
+.copy-btn {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    cursor: pointer;
+    text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="capture-area" id="capture">
+        
+        <div class="header-info">
+            <div class="brand">BARBER AMIN</div>
+            <div class="legend">Свободные места для записи</div>
+        </div>
+
+        <!-- СЕГОДНЯ -->
+        <div class="day-block">
+            <div class="day-header">
+                <span class="day-title">СЕГОДНЯ</span>
+                <!-- Кнопка переключения -->
+                <div class="status-toggle open" onclick="toggleDayStatus('today', this)">
+                    Запись открыта
+                </div>
+            </div>
+            <div class="grid" id="today"></div>
+        </div>
+
+        <!-- ЗАВТРА -->
+        <div class="day-block">
+            <div class="day-header">
+                <span class="day-title">ЗАВТРА</span>
+                <!-- Кнопка переключения -->
+                <div class="status-toggle open" onclick="toggleDayStatus('tomorrow', this)">
+                    Запись открыта
+                </div>
+            </div>
+            <div class="grid" id="tomorrow"></div>
+        </div>
+
+        <div class="phone-block">
+            Запись по телефону
+            <span class="phone-num">+992 008 27 01 10</span>
+			           Или в Direct
+        </div>
+
+    </div>
+</div>
+
+<div class="bottom-panel">
+    <button class="copy-btn" onclick="copyImage()">📸 Сделать скриншот</button>
+</div>
+
+<script>
+const times = [
+    "09:00","10:00","11:00",
+    "12:00","13:00","14:00",
+    "15:00","16:00","17:00",
+    "18:00","19:00","20:00",
+    "21:00","22:00"
+];
+
+// Генерация сетки
+function render(id) {
+    const grid = document.getElementById(id);
+    times.forEach(time => {
+        const el = document.createElement("div");
+        el.className = "time-slot";
+        el.innerText = time;
+        el.onclick = () => el.classList.toggle("booked");
+        grid.appendChild(el);
+    });
+}
+
+render("today");
+render("tomorrow");
+
+// 🔥 НОВАЯ ФУНКЦИЯ: Переключение "Выходной / Открыто"
+function toggleDayStatus(gridId, btn) {
+    const grid = document.getElementById(gridId);
+    const slots = grid.querySelectorAll('.time-slot');
+    
+    // Проверяем текущее состояние по классу
+    const isOpen = btn.classList.contains('open');
+
+    if (isOpen) {
+        // СТАВИМ ВЫХОДНОЙ
+        btn.classList.remove('open');
+        btn.classList.add('closed');
+        btn.innerText = "⛔ ВЫХОДНОЙ";
+        
+        // Все слоты делаем занятыми
+        slots.forEach(slot => slot.classList.add('booked'));
+    } else {
+        // СТАВИМ ОТКРЫТО
+        btn.classList.remove('closed');
+        btn.classList.add('open');
+        btn.innerText = "Запись открыта";
+        
+        // Очищаем все слоты
+        slots.forEach(slot => slot.classList.remove('booked'));
+    }
+}
+
+async function copyImage() {
+    const btn = document.querySelector('.copy-btn');
+    const originalText = btn.innerText;
+    btn.innerText = "⏳ Секунду...";
+    
+    // Скрываем кнопки скриншота на момент снимка, но оставляем контент
+    const target = document.getElementById("capture");
+    await document.fonts.ready;
+
+    const canvas = await html2canvas(target, {
+        backgroundColor: "#121212",
+        scale: 2,
+        useCORS: true
+    });
+
+    canvas.toBlob(async blob => {
+        try {
+            await navigator.clipboard.write([ new ClipboardItem({ "image/png": blob }) ]);
+            alert("✅ Скриншот скопирован в буфер обмена!");
+        } catch (err) {
+            alert("Не удалось скопировать автоматически. Сделайте скриншот вручную.");
+        }
+        btn.innerText = originalText;
+    });
+}
+</script>
+
+</body>
+</html>
