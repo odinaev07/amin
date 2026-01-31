@@ -297,31 +297,59 @@ function toggleDayStatus(gridId, btn) {
     }
 }
 
+/* ===========================
+   БЕЗОПАСНЫЙ STORIES SHARE
+   =========================== */
 async function copyImage() {
     const btn = document.querySelector('.copy-btn');
     const originalText = btn.innerText;
     btn.innerText = "⏳ Секунду...";
-    
-    const target = document.getElementById("capture");
-    await document.fonts.ready;
 
-    const canvas = await html2canvas(target, {
-        backgroundColor: "#121212",
-        scale: 2,
-        useCORS: true
-    });
+    try {
+        const target = document.getElementById("capture");
+        await document.fonts.ready;
 
-    canvas.toBlob(async blob => {
-        try {
-            await navigator.clipboard.write([ new ClipboardItem({ "image/png": blob }) ]);
-            alert("✅ Скриншот скопирован!");
-        } catch (err) {
-            alert("Ошибка. Сделайте скриншот вручную.");
-        }
+        const canvas = await html2canvas(target, {
+            backgroundColor: "#121212",
+            scale: 2,
+            useCORS: true
+        });
+
+        canvas.toBlob(async (blob) => {
+            try {
+                // ⬇️ КЛЮЧЕВОЕ: максимально безопасная проверка
+                if (navigator.share && typeof File !== "undefined") {
+                    const file = new File([blob], "barber-amin.png", {
+                        type: "image/png"
+                    });
+
+                    await navigator.share({
+                        files: [file],
+                        title: "Barber Amin",
+                        text: "Свободные места ✂️"
+                    });
+
+                } else {
+                    // fallback — как было, НИЧЕГО не ломает
+                    await navigator.clipboard.write([
+                        new ClipboardItem({ "image/png": blob })
+                    ]);
+                    alert("✅ Скриншот скопирован!");
+                }
+            } catch (e) {
+                alert("📸 Сделайте скриншот вручную");
+            }
+
+            btn.innerText = originalText;
+        });
+
+    } catch (e) {
         btn.innerText = originalText;
-    });
+        alert("📸 Сделайте скриншот вручную");
+    }
 }
 </script>
+
 
 </body>
 </html>
